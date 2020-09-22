@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 //导入antd组件
-import { Form, Input, Button, Row, Col, message } from 'antd';
+import { Form, Input, Button, Row, Col, message, loading } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 //导入css样式表
 import './index.scss'
@@ -14,7 +14,10 @@ class LoginForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: ""
+            username: "",
+            code_btn_loading: false,
+            code_btn_text: "获取验证码",
+            code_btn_disable: false,
         }
 
     }
@@ -26,6 +29,32 @@ class LoginForm extends Component {
     toggleForm = () => {
         this.props.toggle("register");
     }
+    // 倒计时函数
+    countDown = () => {
+        let timer = null;
+        let sec = 5;
+        this.setState({
+            code_btn_disable: true,
+            code_btn_text: `${sec}S`,
+            code_btn_loading: false
+        })
+        timer = setInterval(() => {
+            sec--;
+            if (sec <= 0) {
+                this.setState({
+                    code_btn_text: '重新获取',
+                    code_btn_disable: false,
+
+                })
+                clearInterval(timer);
+                return false;
+            }
+            this.setState({
+                code_btn_text: `${sec}S`
+            })
+        }, 1000)
+
+    }
     // 获取验证码
     getCode = () => {
         if (!this.state.username) {
@@ -36,7 +65,14 @@ class LoginForm extends Component {
             username: this.state.username,
             module: "login"
         }
-        GetCode(requestData).then(res => { console.log(res) }).catch(err => { console.log(err) })
+        GetCode(requestData).then(res => {
+            this.countDown()
+        }).catch(err => {
+            this.setState({
+                code_btn_text: "重新获取"
+
+            })
+        })
     }
     //输入处理
     inputChange = (e) => {
@@ -47,7 +83,7 @@ class LoginForm extends Component {
 
 
     render() {
-        const { username } = this.state;
+        const { username, code_btn_loading, code_btn_text, code_btn_disable } = this.state;
         return (
             <Fragment>
                 <div className="form-header">
@@ -85,13 +121,13 @@ class LoginForm extends Component {
                                     <Input prefix={<LockOutlined className="site-form-item-icon" />} placeholder="code" />
                                 </Col>
                                 <Col span={9}>
-                                    <Button type="danger" block onClick={this.getCode}>获取验证码</Button>
+                                    <Button type="danger" disabled={this.code_btn_disable} loading={code_btn_loading} block onClick={this.getCode}>{code_btn_text}</Button>
                                 </Col>
 
                             </Row>
                         </Form.Item>
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button" block>
+                            <Button disabled={code_btn_loading} type="primary" htmlType="submit" className="login-form-button" block>
                                 注册
                                 </Button>
                         </Form.Item>
