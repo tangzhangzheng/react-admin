@@ -32,7 +32,7 @@ class LoginForm extends Component {
     // 倒计时函数
     countDown = () => {
         let timer = null;
-        let sec = 5;
+        let sec = 60;
         this.setState({
             code_btn_disable: true,
             code_btn_text: `${sec}S`,
@@ -61,6 +61,10 @@ class LoginForm extends Component {
             message.warning('用户名不能为空', 1);
             return false;
         }
+        this.setState({
+            code_btn_text: "发送中",
+            code_btn_loading: true
+        })
         const requestData = {
             username: this.state.username,
             module: "login"
@@ -69,8 +73,8 @@ class LoginForm extends Component {
             this.countDown()
         }).catch(err => {
             this.setState({
-                code_btn_text: "重新获取"
-
+                code_btn_text: "重新获取",
+                code_btn_loading: false
             })
         })
     }
@@ -121,13 +125,13 @@ class LoginForm extends Component {
                                     <Input prefix={<LockOutlined className="site-form-item-icon" />} placeholder="code" />
                                 </Col>
                                 <Col span={9}>
-                                    <Button type="danger" disabled={this.code_btn_disable} loading={code_btn_loading} block onClick={this.getCode}>{code_btn_text}</Button>
+                                    <Button type="danger" disabled={code_btn_disable} loading={code_btn_loading} block onClick={this.getCode}>{code_btn_text}</Button>
                                 </Col>
 
                             </Row>
                         </Form.Item>
                         <Form.Item>
-                            <Button disabled={code_btn_loading} type="primary" htmlType="submit" className="login-form-button" block>
+                            <Button type="primary" htmlType="submit" className="login-form-button" block>
                                 注册
                                 </Button>
                         </Form.Item>
