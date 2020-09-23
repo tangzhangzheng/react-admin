@@ -1,23 +1,23 @@
 import React, { Component, Fragment } from 'react'
 //导入antd组件
-import { Form, Input, Button, Row, Col, message, loading } from 'antd';
+import { Form, Input, Button, Row, Col, } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 //导入css样式表
 import './index.scss'
 //导入正则表达式验证规则
 import { reg_password } from '../../utils/validate'
 //导入接口文件
+import { Login } from "../../api/account";
+//导入组件
+import Code from "../../components/code/index"
 
-import { Login, GetCode } from "../../api/account";
 
 class LoginForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
             username: "",
-            code_btn_loading: false,
-            code_btn_text: "获取验证码",
-            code_btn_disable: false,
+            module: "login",
         }
 
     }
@@ -29,65 +29,14 @@ class LoginForm extends Component {
     toggleForm = () => {
         this.props.toggle("register");
     }
-    // 倒计时函数
-    countDown = () => {
-        let timer = null;
-        let sec = 60;
-        this.setState({
-            code_btn_disable: true,
-            code_btn_text: `${sec}S`,
-            code_btn_loading: false
-        })
-        timer = setInterval(() => {
-            sec--;
-            if (sec <= 0) {
-                this.setState({
-                    code_btn_text: '重新获取',
-                    code_btn_disable: false,
 
-                })
-                clearInterval(timer);
-                return false;
-            }
-            this.setState({
-                code_btn_text: `${sec}S`
-            })
-        }, 1000)
-
-    }
-    // 获取验证码
-    getCode = () => {
-        if (!this.state.username) {
-            message.warning('用户名不能为空', 1);
-            return false;
-        }
-        this.setState({
-            code_btn_text: "发送中",
-            code_btn_loading: true
-        })
-        const requestData = {
-            username: this.state.username,
-            module: "login"
-        }
-        GetCode(requestData).then(res => {
-            this.countDown()
-        }).catch(err => {
-            this.setState({
-                code_btn_text: "重新获取",
-                code_btn_loading: false
-            })
-        })
-    }
-    //输入处理
     inputChange = (e) => {
         let value = e.target.value
         this.setState({ username: value })
 
     }
-
-
     render() {
-        const { username, code_btn_loading, code_btn_text, code_btn_disable } = this.state;
+        const { username, module } = this.state;
         return (
             <Fragment>
                 <div className="form-header">
@@ -115,7 +64,7 @@ class LoginForm extends Component {
                         { pattern: reg_password, message: '密码格式不正确' }
 
                         ]}>
-                            <Input prefix={<LockOutlined className="site-form-item-icon" />} placeholder="password" />
+                            <Input type="password" prefix={<LockOutlined className="site-form-item-icon" />} placeholder="password" />
                         </Form.Item>
                         <Form.Item name="code" rules={[{ required: true, message: '验证码不能为空', },
                         { len: 6, message: '请输入长度6位验证码' }
@@ -125,14 +74,14 @@ class LoginForm extends Component {
                                     <Input prefix={<LockOutlined className="site-form-item-icon" />} placeholder="code" />
                                 </Col>
                                 <Col span={9}>
-                                    <Button type="danger" disabled={code_btn_disable} loading={code_btn_loading} block onClick={this.getCode}>{code_btn_text}</Button>
+                                    <Code username={this.state.username} module={module} />
                                 </Col>
 
                             </Row>
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit" className="login-form-button" block>
-                                注册
+                                登录
                                 </Button>
                         </Form.Item>
                     </Form>

@@ -16,3 +16,13 @@ export function GetCode(data) {
         data,
     })
 }
+
+//注册接口
+export function Register(data) {
+    return service.request({
+        url: "/register",
+        method: "POST",
+        data
+    })
+
+}
