@@ -7,7 +7,8 @@ import Code from '../../components/code/index'
 import { validate_pass } from '../../utils/validate'
 //导入接口文件
 import { Register } from "../../api/account";
-
+//导入md5插件
+import CryptoJs from 'crypto-js'
 
 class RegisterForm extends Component {
     constructor() {
@@ -22,14 +23,14 @@ class RegisterForm extends Component {
     onFinish = (values) => {
         const requestData = {
             username: this.state.username,
-            password: this.state.password,
+            password: CryptoJs.MD5(this.state.password).toString(),
             code: this.state.code
         }
         Register(requestData).then(response => {
-            const data = response.data;
+            const data = response.data
             message.success(data.message)
             if (data.resCode === 0) {
-                this.toogleForm();
+                this.toggleForm()
             }
         }).catch(error => {
 
@@ -103,7 +104,7 @@ class RegisterForm extends Component {
                         }),
 
                         ]}>
-                            <Input onClick={this.inputChangePassword} prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入密码" />
+                            <Input onChange={this.inputChangePassword} prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入密码" />
                         </Form.Item>
                         <Form.Item name="passwords" rules={[
                             { required: true, message: '二次输入密码不能为空' },
@@ -119,14 +120,14 @@ class RegisterForm extends Component {
                         ]}>
                             <Input prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入密码" />
                         </Form.Item>
-                        <Form.Item name="code" rules={[{ required: true, message: ' 请输入验证码 ' }, ,
+                        <Form.Item name="code" rules={[{ required: true, message: ' 请输入验证码 ' },
                         { len: 6, message: '请输入长度6位验证码' }]}>
                             <Row gutter={13}>
                                 <Col span={15}>
-                                    <Input onClick={this.inputChangeCode} prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入验证码" />
+                                    <Input onChange={this.inputChangeCode} prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入验证码" />
                                 </Col>
                                 <Col span={9}>
-                                    <Code username={username} />
+                                    <Code username={username} module={module} />
                                 </Col>
 
                             </Row>

@@ -60,7 +60,7 @@ class Code extends Component {
     // 倒计时函数
     countDown = () => {
 
-        let sec = 60;
+        let sec = 15;
         this.setState({
             btn_disabled: true,
             btn_text: `${sec}S`,
@@ -71,7 +71,7 @@ class Code extends Component {
             if (sec <= 0) {
                 this.setState({
                     btn_text: '重新获取',
-                    btn_disable: false,
+                    btn_disabled: false,
 
                 })
                 clearInterval(timer);
