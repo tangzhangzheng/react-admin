@@ -5,3 +5,11 @@ body {
     background-color: #001529 !important; // 权重最高
 }
   
+@mixin webkit($attr,$value){
+    -webkit-#{$attr}: $value;
+    -moz-#{$attr}: $value;
+    -ms-#{$attr}: $value;
+    -o-#{$attr}: $value;
+    #{$attr}: $value;
+
+}

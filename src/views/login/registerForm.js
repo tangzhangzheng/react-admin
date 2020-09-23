@@ -118,13 +118,13 @@ class RegisterForm extends Component {
                                 }
                             })
                         ]}>
-                            <Input prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入密码" />
+                            <Input type="password" prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入密码" />
                         </Form.Item>
                         <Form.Item name="code" rules={[{ required: true, message: ' 请输入验证码 ' },
                         { len: 6, message: '请输入长度6位验证码' }]}>
                             <Row gutter={13}>
                                 <Col span={15}>
-                                    <Input onChange={this.inputChangeCode} prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入验证码" />
+                                    <Input type="password" onChange={this.inputChangeCode} prefix={<LockOutlined className="site-form-item-icon" />} placeholder="请输入验证码" />
                                 </Col>
                                 <Col span={9}>
                                     <Code username={username} module={module} />
