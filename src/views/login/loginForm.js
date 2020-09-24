@@ -13,9 +13,8 @@ import { Login } from "../../api/account";
 import Code from "../../components/code/index"
 //导入md5插件
 import CryptoJs from 'crypto-js'
-// 方法
-import { setToken } from '../../utils/session'
 
+import { setUsername, setToken } from '../../utils/cookies'
 
 
 
@@ -47,6 +46,7 @@ class LoginForm extends Component {
             // 存储token
             const data = res.data.data
             setToken(data.token)
+            setUsername(data.username)
             this.props.history.push('/index')
         }).catch(err => {
             this.setState({

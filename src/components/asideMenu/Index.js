@@ -12,8 +12,8 @@ class AsideMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            SelectedKey: ['/index/user/list'],
-            OpenKeys: ['/index/user']
+            selectedKeys: [],
+            openKeys: []
         };
     }
 
@@ -42,17 +42,47 @@ class AsideMenu extends Component {
     }
     componentDidMount() {
 
+        const pathname = this.props.location.pathname
+        const menuKey = pathname.split("/").slice(0, 3).join("/")
+        const menuHigh = {
+            selectedKeys: pathname,
+            openKeys: menuKey,
+        }
+        this.selectMenuHigh(menuHigh)
+    }
+    /* 操作菜单 */
+    selectMenu = ({ item, key, keyPath, domEvent }) => {
+        const menuHigh = {
+            selectedKeys: key,
+            openKeys: keyPath[keyPath.length - 1]  // the last el in the array
+        }
+        this.selectMenuHigh(menuHigh)
+    }
+    /* 菜单封装 */
+    selectMenuHigh = ({ selectedKeys, openKeys }) => {
+        this.setState({
+            selectedKeys: [selectedKeys],
+            openKeys: [openKeys]  // the last el in the array
+        })
+
+    }
+    onopenMenu = (openKeys) => {
+        this.setState({
+            openKeys: [openKeys[openKeys.length - 1]]
+        })
     }
 
     render() {
-        const { SelectedKeys, OpenKeys } = this.state;
+        const { selectedKeys, openKeys } = this.state;
         return (
             <Fragment>
                 <Menu
+                    onOpenChange={this.onopenMenu}
+                    onClick={this.selectMenu}
                     theme="dark"
                     mode="inline"
-                    SelectedKeys={SelectedKeys}
-                    OpenKeys={OpenKeys}
+                    selectedKeys={selectedKeys}
+                    openKeys={openKeys}
                     style={{ height: '100%', borderRight: 0 }}
                 >
                     {
@@ -66,4 +96,4 @@ class AsideMenu extends Component {
     }
 }
 
-export default AsideMenu;
+export default withRouter(AsideMenu);
