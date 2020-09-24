@@ -1,91 +1,96 @@
-import React, { Component } from 'react'
-import { Button, message } from 'antd'
-//导入接口文件
+import React, { Component } from "react";
+// API
 import { GetCode } from "../../api/account";
-//导入正则表达式验证规则
-import { validate_email } from '../../utils/validate'
-
-
+// antd
+import { Button, message } from "antd";
+// 验证
+import { validate_email } from "../../utils/validate";
 // 定时器
 let timer = null;
 // class 组件
 class Code extends Component {
-    constructor(props) {
-        super(props)
+    constructor(props){
+        super(props); // 初始化默认值 
         this.state = {
             username: props.username,
-            btn_text: "获取验证码",
-            btn_loading: false,
-            btn_disabled: false,
-            module: props.module,
+            button_text: "获取验证码",
+            button_loading: false,
+            button_disabled: false,
+            module: props.module
         }
     }
-    //生命周期组件
-    componentWillReceiveProps({ username }) {
-        this.setState({ username })
+    // this.props.username 每次都会去获取
+    componentWillReceiveProps({ username }){
+        this.setState({
+            username // 数据的变量和key是相同情况，只用一个就可以
+        })
     }
-    componentWillUnmount() {
+    /** 销毁组件 */
+    componentWillUnmount(){
         clearInterval(timer);
     }
-    // 获取验证码
+    /**
+     * 获取验证码
+     */
     getCode = () => {
         const username = this.state.username;
-
-        if (!username) {
-            message.warning('用户名不能为空', 1);
+        if(!username) {
+            message.warning('用户名不能为空！！', 1);
             return false;
         }
-        if (!validate_email(username)) {
-            message.warning('邮箱格式不正确', 1);
+        if(!validate_email(username)) {
+            message.warning('邮箱格式不正解', 1);
             return false;
         }
         this.setState({
-            btn_text: "发送中",
-            btn_loading: true
+            button_loading: true,
+            button_text: "发送中"
         })
         const requestData = {
-            username: username,
+            username,
             module: this.state.module
         }
-        GetCode(requestData).then(res => {
-            message.success(res.data.message)
-            this.countDown()
-        }).catch(err => {
+        GetCode(requestData).then(response => {
+            message.success(response.data.message);
+            // 执行倒计时
+            this.countDown();
+        }).catch(error => {
             this.setState({
-                btn_text: "重新获取",
-                btn_loading: false
+                button_loading: false,
+                button_text: "重新获取"
             })
         })
     }
-    // 倒计时函数
+    /**
+     * 倒计时
+     */
     countDown = () => {
-
-        let sec = 15;
+        // 倒计时时间
+        let sec = 60;
+        // 修改状态
         this.setState({
-            btn_disabled: true,
-            btn_text: `${sec}S`,
-            btn_loading: false
+            button_loading: false,
+            button_disabled: true,
+            button_text: `${sec}S`
         })
         timer = setInterval(() => {
             sec--;
-            if (sec <= 0) {
+            if(sec <= 0) {
                 this.setState({
-                    btn_text: '重新获取',
-                    btn_disabled: false,
-
+                    button_text: `重新获取`,
+                    button_disabled: false,
                 })
                 clearInterval(timer);
                 return false;
             }
             this.setState({
-                btn_text: `${sec}S`
+                button_text: `${sec}S`
             })
         }, 1000)
-
     }
 
-    render() {
-        return <Button type="danger" disabled={this.state.btn_disabled} loading={this.state.btn_loading} block onClick={this.getCode}>{this.state.btn_text}</Button>
+    render(){
+        return <Button type="danger" disabled={this.state.button_disabled} loading={this.state.button_loading} block onClick={this.getCode}>{this.state.button_text}</Button>
     }
 }
 

@@ -110,7 +110,7 @@ class RegisterForm extends Component {
                             { required: true, message: '二次输入密码不能为空' },
                             ({ getFieldValue }) => ({
                                 validator(role, value) {
-                                    if (value != getFieldValue("password")) {
+                                    if (value !== getFieldValue("password")) {
                                         return Promise.reject("密码不一致")
                                     }
                                     return Promise.resolve()

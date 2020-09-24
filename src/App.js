@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Switch, Route, BrowserRouter } from 'react-router-dom'
 import Index from './views/index/Index';
 import Login from './views/login/index';
-
+import PrivateRouter from './components/privateRouter/index';
 
 class App extends Component {
   constructor(props) {
@@ -15,8 +15,7 @@ class App extends Component {
       <BrowserRouter>
         <Switch>
           <Route component={Login} exact path="/"></Route>
-          <Route component={Index} exact path="/index"></Route>
-
+          <PrivateRouter component={Index} path="/index"></PrivateRouter>
         </Switch>
       </BrowserRouter>
     )
