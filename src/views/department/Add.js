@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Form, Input, Button, InputNumber, Radio, message } from 'antd'
-import { DepartmentAddApi } from '../../api/department'
+import { DepartmentAddApi, Detailed, Edit } from '../../api/department'
 
 
 class DepartmentAdd extends Component {
@@ -8,11 +8,42 @@ class DepartmentAdd extends Component {
         super(props);
         this.state = {
             loading: false,
+
             formLayout: {
                 labelCol: { span: 2 },
                 wrapperCol: { span: 20 }
-            }
+            },
+            id: "",
         };
+    }
+
+    componentWillMount() {
+        console.log(this.props.location.state);
+        if (this.props.location.state) {
+            this.setState(
+                {
+                    id: this.props.location.state.id
+                }
+            )
+        }
+    }
+    componentDidMount() {
+        this.getDetail()
+
+
+    }
+    getDetail = () => {
+        if (!this.props.location.state) return false;
+        console.log(this.props.location.state)
+        Detailed({ id: this.state.id }).then(res => {
+            const data = res.data.data
+            this.refs.form.setFieldsValue({
+                content: data.content,
+                name: data.name,
+                number: data.number,
+                status: data.status
+            })
+        }).catch(err => { });
     }
     onSubmit = (value) => {
 
@@ -24,26 +55,50 @@ class DepartmentAdd extends Component {
             message.error('人员数量不能为0')
             return false;
         }
-        if (!value["content "]) {
+        if (!value.content) {
             message.error('描述不能为空')
             return false;
         }
         this.setState({
             loading: true
         })
+        /* 从确定按钮执行添加或编辑 */
+        this.state.id ? this.onHandleEdit(value) : this.onHandleAdd(value)
+    }
+    /* 添加表单 */
+    onHandleAdd = (value) => {
         DepartmentAddApi(value).then(res => {
-            const data = res.data
-            message.info(data.message)
             this.setState({
                 loading: true
             })
+            const data = res.data
+            message.info(data.message)
             this.refs.form.resetFields()
-        }).catch(err => {
             this.setState({
                 loading: false
             })
-            message.info(err.data.message)
+        }).catch(err => {
+            console.log(err);
         })
+    }
+
+    /* 编辑信息 */
+    onHandleEdit = (value) => {
+        const requestData = value
+
+        console.log(this.state)
+        requestData.id = this.state.id;
+        console.log(requestData)
+        // console.log(requestData.id)
+        Edit(requestData).then((response) => {
+            const data = response.data;
+            message.info(data.message);
+            this.setState({ loading: false })
+        }).catch((err) => console.log(
+            this.setState({
+                loading: false
+            })
+        ))
     }
     render() {
         return (
@@ -55,12 +110,12 @@ class DepartmentAdd extends Component {
                     <InputNumber min={0} />
                 </Form.Item>
                 <Form.Item label="禁启用" name="status">
-                    <Radio.Group defaultValue={0}>
-                        <Radio value={0} >禁用 </Radio>
-                        <Radio value={1}>启用</Radio>
+                    <Radio.Group defaultValue={false}>
+                        <Radio value={false} >禁用 </Radio>
+                        <Radio value={true}>启用</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="描述" name="content ">
+                <Form.Item label="描述" name="content">
                     <Input.TextArea />
                 </Form.Item>
                 <Form.Item>

@@ -1,7 +1,7 @@
 /**
  * 登录接口
  */
-export function infoList(data){
+export function infoList(data) {
     return service.request({
         url: "/login/",
         method: "post",
@@ -13,7 +13,7 @@ export function infoList(data){
 /**
  * 登录接口
  */
-export function infoDetailed(data){
+export function infoDetailed(data) {
     return service.request({
         url: "/login/",
         method: "post",
@@ -21,3 +21,4 @@ export function infoDetailed(data){
         // params: data // 请求类型为 get 时
     })
 }
+/* 添加接口 */

@@ -13,3 +13,15 @@ body {
     #{$attr}: $value;
 
 }
+.inline-button{
+    button+button{margin-left: 10px;}
+}
+.table-wrap {
+    padding-top: 30px;
+}
+.modal-text{
+    text-align: center;
+}
+.modal-color{
+    color: #f00;
+}
