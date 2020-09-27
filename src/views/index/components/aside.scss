@@ -1,0 +1,50 @@
+.logo{
+    float: left;
+    align-items: center;
+    justify-content: center;
+    margin-left: -50px;
+    height: 75px;
+    width: 250px;
+    background-color: #001529;
+    -webkit-transition: all .2s ease 0s;
+    -moz-transition: all .2s ease 0s;
+    -o-transition: all .2s ease 0s;
+    transition: all .2s ease 0s;
+
+  span{
+      display: flex;
+        height: 47px;
+        width: 177px;
+        background-color: #1a2d3f;
+  }
+  &.close{
+    width: 80px;
+    span{
+      width: 100%;
+    }
+  }
+
+}
+.collapsed-close {
+ 
+  .logo {
+    width: 80px; 
+    span {
+      width:100%
+    }
+  }
+  .header-wrap{
+    margin-left: 65px;
+  }
+}
+.header-wrap{
+  -webkit-transition: all .2s ease 0s;
+  -moz-transition: all .2s ease 0s;
+  -o-transition: all .2s ease 0s;
+  transition: all .2s ease 0s;
+  margin-left: 220px;
+  .collapsed-icon{
+    font-size:25px;
+    cursor: pointer;
+  }
+}

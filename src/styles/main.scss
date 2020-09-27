@@ -5,3 +5,30 @@ body {
     background-color: #001529 !important; // 权重最高
 }
   
+@mixin webkit($attr,$value){
+    -webkit-#{$attr}: $value;
+    -moz-#{$attr}: $value;
+    -ms-#{$attr}: $value;
+    -o-#{$attr}: $value;
+    #{$attr}: $value;
+
+}
+.inline-button{
+    button+button{margin-left: 10px;}
+}
+.table-wrap {
+    padding-top: 30px;
+}
+.modal-text{
+    text-align: center;
+}
+.modal-color{
+    color: #f00;
+}
+.pull-right{
+    float: right;
+    
+}
+.spacing-30px{
+    height: 30px;
+}
