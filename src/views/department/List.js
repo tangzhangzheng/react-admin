@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
-import { Button, Form, Input, Switch, message, Modal } from 'antd'
-import { Delete, Status } from '../../api/department'
+import { Button, Switch, message } from 'antd'
+import { Status } from '../../api/department'
 import { Link } from 'react-router-dom'
 import TableComponent from '@/components/tableData/Index'
 
@@ -24,7 +24,7 @@ class DepartmentList extends Component {
                     { title: "部门名称", dataIndex: "name", key: "name" },
                     {
                         title: "禁启用", dataIndex: "status", key: "status", render: (text, rowData) => {
-                            return <Switch onChange={() => { this.onHandlerSwitch(rowData) }} loading={this.state.id == rowData.id ? true : false} checkedChildren="启用" unCheckedChildren="禁用" defaultChecked={rowData.status === "1" ? true : false} />
+                            return <Switch onChange={() => { this.onHandlerSwitch(rowData) }} loading={this.state.id === rowData.id ? true : false} checkedChildren="启用" unCheckedChildren="禁用" defaultChecked={rowData.status === "1" ? true : false} />
                         }
                     },
                     { title: "人员数量", dataIndex: "number", key: "number" },
@@ -45,17 +45,7 @@ class DepartmentList extends Component {
         }
         this.onHandlerSwitch = this.onHandlerSwitch.bind(this)
     }
-    //绑定搜索事件
-    onFinish = (value) => {
-        if (this.state.loading) { return false }
-        this.setState({
-            keyWords: value.name,
-            pageNumber: 1,
-            pageSize: 10,
-        })
-        //调用数据
-        this.loadData()
-    }
+
     /* 声明周期挂在完成 */
     componentDidMount() {
     }
@@ -82,17 +72,7 @@ class DepartmentList extends Component {
     render() {
         return (
             <Fragment>
-                <Form layout="inline" onFinish={this.onFinish} >
-                    <Form.Item label="部门名称" name="name" >
-                        <Input placeholder="请输入部门名称" />
-                    </Form.Item>.
-                <Form.Item>
-                        <Button type="primary" htmlType="submit"> 搜索</Button>
-                    </Form.Item>
-                </Form>
-                <div className="table-wrap">
-                    <TableComponent onRef={this.getChildRef} batchBtn={true} tableConfig={this.state.tableConfig} />
-                </div>
+                <TableComponent onRef={this.getChildRef} batchBtn={true} tableConfig={this.state.tableConfig} />
             </Fragment>
 
         );

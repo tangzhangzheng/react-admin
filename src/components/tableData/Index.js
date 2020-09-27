@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Table, Pagination, Row, Col, Modal, message } from 'antd'
+import { Modal, message, Form, Input, Button } from 'antd'
 import { TableList, TableDelete } from '@api/common'
-
+import TableBasis from './Table'
 import requestUrl from '@/api/requestUrl'
 
 
@@ -31,19 +31,20 @@ class TableComponent extends Component {
         // 返回子组件的实例
         this.loadData()
         this.props.onRef(this)
-
     }
     //获取数据
     loadData = () => {
-        console.log(`开始获取数据当前页码${this.state.pageNumber}`)
+        const { pageNumber, pageSize, keyWords } = this.state
         const requestData = {
             url: requestUrl[`${this.props.tableConfig.url}List`],
             method: this.props.tableConfig.method,
             data: {
-                pageNumber: this.state.pageNumber,
-                pageSize: this.state.pageSize
+                pageNumber: pageNumber,
+                pageSize: pageSize,
             }
-
+        }
+        if (keyWords) {
+            requestData.data.name = keyWords
         }
         TableList(requestData).then(response => {
             const resData = response.data.data
@@ -54,7 +55,7 @@ class TableComponent extends Component {
                 })
             }
             this.setState({ loading: false })
-            console.log(`获取数据时页码${this.state.pageNumber}`)
+
         }).catch(err => { this.setState({ loading: false }) })
     }
     /* 复选框 */
@@ -63,7 +64,6 @@ class TableComponent extends Component {
             checkBoxValue: value
         })
     }
-
     //页码
     onChangeCurrentPage = (page, pageSize) => {
         console.log(`回调前页码是${this.state.pageNumber}`)
@@ -126,6 +126,18 @@ class TableComponent extends Component {
             this.loadData()
         }).catch((err) => console.log(err))
     }
+    /* 搜索 */
+
+    onFinish = (value) => {
+        if (this.state.loading) { return false }
+        this.setState({
+            keyWords: value.name,
+            pageNumber: 1,
+            pageSize: 10,
+        })
+        //调用数据
+        this.loadData()
+    }
     render() {
         const { checkBox, thead } = this.props.tableConfig
         const rowSelections = {
@@ -133,29 +145,32 @@ class TableComponent extends Component {
         }
         return (
 
-            <Fragment>
-                {/* 表格组件 */}
-                <Table pagination={false} loading={this.state.loading} bordered rowKey={this.state.rowKey || "id"}
-                    rowSelection={checkBox ? rowSelections : null} {...rowSelections} columns={thead} dataSource={this.state.data} bordered>
-                </Table>
-                <div className="spacing-30px"></div>
-                <Row>
-                    <Col span={8}>
-                        {this.props.batchBtn && <Button onClick={() => this.onHandlerDelete()}> 批量删1除</Button>}
-                    </Col>
-                    <Col span={16}>
-                        <Pagination
-                            current={this.state.current}
-                            onChange={this.onChangeCurrentPage}
-                            onShowSizeChange={this.onChangeSizePage}
-                            className="pull-right"
-                            total={this.state.total}
-                            showSizeChanger
-                            showQuickJumper
-                            showTotal={total => `Total ${total} items`}
-                        />
-                    </Col>
-                </Row>
+            <Fragment>   <Form layout="inline" onFinish={this.onFinish} >
+                <Form.Item label="部门名称" name="name" >
+                    <Input placeholder="请输入部门名称" />
+                </Form.Item>.
+    <Form.Item>
+                    <Button type="primary" htmlType="submit"> 搜索</Button>
+                </Form.Item>
+            </Form>
+                <div className="table-wrap">
+
+                    {/* 表格组件 */}
+                    <TableBasis
+                        columns={thead}
+                        dataSource={this.state.data}
+                        total={this.state.total}
+                        changePageCurrent={this.onChangeCurrentPage}
+                        changePageSize={this.onChangeSizePage}
+                        HandlerDelete={() => this.onHandlerDelete()}
+                        rowSelection={checkBox ? rowSelections : null}
+                        rowKey={this.state.rowKey || "id"}
+                    />
+                </div>
+                {/* 筛选 */}
+
+
+
                 {/* 弹窗 */}
                 <Modal
                     title="提示"
