@@ -21,15 +21,7 @@ export function GetList(data) {
     })
 }
 
-/* 删除 */
-export function Delete(data) {
-    return service.request({
-        url: "/department/delete/",
-        method: "post",
-        data // 请求类型为 post 时
-        // params: data // 请求类型为 get 时
-    })
-}
+
 // TODO
 export function Status(data) {
     return service.request({

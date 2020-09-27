@@ -1,4 +1,5 @@
 const requestUrl = {
-    "departmentList": "/department/list/"
+    "departmentList": "/department/list/",
+    "departmentDelete": "/department/delete/",
 }
 export default requestUrl 

@@ -8,3 +8,12 @@ export function TableList(params) {
         // params: data // 请求类型为 get 时
     })
 }
+/* 删除列表 */
+export function TableDelete(params) {
+    return service.request({
+        url: params.url,
+        method: params.method || "POST",
+        data: params.data  // 请求类型为 post 时
+        // params: data // 请求类型为 get 时
+    })
+}
