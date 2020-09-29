@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { Form, Input, Button, InputNumber, Radio, message } from 'antd'
-import { DepartmentAddApi, Detailed, Edit } from '../../api/department'
+import { message } from 'antd'
+import { Detailed, Edit, Add } from '../../api/department'
+import FormCom from '@/components/form/Index'
 
 
 class DepartmentAdd extends Component {
@@ -14,6 +15,60 @@ class DepartmentAdd extends Component {
                 wrapperCol: { span: 20 }
             },
             id: "",
+            formItem: [
+                {
+                    type: "Input",
+                    label: "部门名称",
+                    name: "name",
+                    required: true,
+                    style: { width: "200px" },
+                    placeholder: "请输入部门名称"
+                },
+                {
+                    type: "Select", label: "部门12名称", name: "namea", required: true, options: [
+                        { label: "研发部", value: "a" },
+                        { label: "行政部", value: "b" }
+                    ],
+                    style: { width: "150px" }
+                },
+                {
+                    type: "InputNumber",
+                    label: "人员数量",
+                    name: "number",
+                    required: true,
+                    style: { width: "200px" },
+                    placeholder: "请输入人员数量",
+                    max: "100",
+                    min: "0"
+                },
+                {
+                    type: "Radio",
+                    label: "禁启用",
+                    name: "status",
+                    required: true,
+                    options: [
+                        { label: "启用", value: true },
+                        { label: "禁用", value: false }
+                    ]
+                },
+                {
+                    type: "Input",
+                    label: "描述",
+                    name: "content",
+                    required: true,
+                    placeholder: "请输入人员描述内容",
+
+                },
+
+            ],
+            formConfig: {
+                url: "departmentAddForm",
+                initValue: {
+                    number: 4,
+                    status: true
+                },
+                setFieldsValue: {}
+            }
         };
     }
 
@@ -29,67 +84,24 @@ class DepartmentAdd extends Component {
     }
     componentDidMount() {
         this.getDetail()
-
-
     }
     getDetail = () => {
         if (!this.props.location.state) return false;
         console.log(this.props.location.state)
         Detailed({ id: this.state.id }).then(res => {
-            const data = res.data.data
-            this.refs.form.setFieldsValue({
-                content: data.content,
-                name: data.name,
-                number: data.number,
-                status: data.status
+            this.setState({
+                formConfig: {
+                    ...this.state.formConfig,
+                    setFieldsValue: res.data.data
+                }
             })
         }).catch(err => { });
     }
-    onSubmit = (value) => {
-
-        if (!value.name) {
-            message.error('部门不能为空')
-            return false;
-        }
-        if (!value.number || value.number === 0) {
-            message.error('人员数量不能为0')
-            return false;
-        }
-        if (!value.content) {
-            message.error('描述不能为空')
-            return false;
-        }
-        this.setState({
-            loading: true
-        })
-        /* 从确定按钮执行添加或编辑 */
-        this.state.id ? this.onHandleEdit(value) : this.onHandleAdd(value)
-    }
-    /* 添加表单 */
-    onHandleAdd = (value) => {
-        DepartmentAddApi(value).then(res => {
-            this.setState({
-                loading: true
-            })
-            const data = res.data
-            message.info(data.message)
-            this.refs.form.resetFields()
-            this.setState({
-                loading: false
-            })
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-
     /* 编辑信息 */
     onHandleEdit = (value) => {
         const requestData = value
-
-        console.log(this.state)
         requestData.id = this.state.id;
-        console.log(requestData)
-        // console.log(requestData.id)
+
         Edit(requestData).then((response) => {
             const data = response.data;
             message.info(data.message);
@@ -100,29 +112,37 @@ class DepartmentAdd extends Component {
             })
         ))
     }
+
+    onHandleAdd = (value) => {
+        const requestData = value
+        requestData.id = this.state.id;
+        Add(requestData).then((response) => {
+            const data = response.data;
+            message.info(data.message);
+            this.setState({ loading: false })
+        }).catch((err) => console.log(
+            this.setState({
+                loading: false
+            })
+        ))
+    }
+
+    onHandlerSubmit = (value) => {
+        this.state.id ? this.onHandleEdit(value) : this.onHandleAdd(value)
+    }
+
     render() {
         return (
-            <Form ref="form" onFinish={this.onSubmit} {...this.state.formLayout}>
-                <Form.Item label="部门名称" name="name" >
-                    <Input />
-                </Form.Item>
-                <Form.Item label="人员数量" name="number">
-                    <InputNumber min={0} />
-                </Form.Item>
-                <Form.Item label="禁启用" name="status">
-                    <Radio.Group defaultValue={false}>
-                        <Radio value={false} >禁用 </Radio>
-                        <Radio value={true}>启用</Radio>
-                    </Radio.Group>
-                </Form.Item>
-                <Form.Item label="描述" name="content">
-                    <Input.TextArea />
-                </Form.Item>
-                <Form.Item>
-                    <Button loading={this.state.loading} type="primary" htmlType="submit">确定</Button>
-                </Form.Item>
-            </Form>
-
+            <div>
+                <FormCom
+                    formItem={this.state.formItem}
+                    formLayout={this.formLayout}
+                    onSubmit={this.onSubmit}
+                    formConfig={this.state.formConfig}
+                    initValue={this.state.formConfig.initValue}
+                    submit={this.onHandlerSubmit}
+                />
+            </div>
         );
     }
 }

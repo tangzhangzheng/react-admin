@@ -2,15 +2,15 @@ import React, { Component, Fragment } from 'react'
 import { Button, Switch, message } from 'antd'
 import { Status } from '../../api/department'
 import { Link } from 'react-router-dom'
-import TableComponent from '@/components/tableData/Table'
+import TableComponent from '@/components/tableData/Index'
 import Store from '@/store/Index'
 import { addStatus } from '../../store/action/config'
-import FormSearch from '@/components/formSearch/Index'
+
 
 
 class DepartmentList extends Component {
-    constructor(...props) {
-        super(...props);
+    constructor(props) {
+        super(props);
         this.state = {
             // 请求参数
             pageNumber: 1,
@@ -19,8 +19,6 @@ class DepartmentList extends Component {
             id: "",
             data: [],
             tableConfig: {
-
-                rowKey: "id",
                 batchBtn: false,
                 url: "department",
                 checkBox: true,
@@ -69,14 +67,13 @@ class DepartmentList extends Component {
 
     /* 声明周期挂在完成 */
     componentDidMount() {
-        // Store.subscribe(() => {
-        //     console.log(Store.getState());
-        // })
-        // Store.dispatch(addStatus({
-        //     label: "你好",
-        //     value: "nihao"
-        // }))
-
+        Store.subscribe(() => {
+            console.log(Store.getState());
+        })
+        Store.dispatch(addStatus({
+            label: "你好",
+            value: "nihao"
+        }))
     }
     // 获取子组件的实例
     getChildRef = (ref) => {
@@ -102,8 +99,7 @@ class DepartmentList extends Component {
     render() {
         return (
             <Fragment>
-                <FormSearch formItem={this.state.formItem} />
-                <TableComponent tableConfig={this.state.tableConfig} />
+                <TableComponent onRef={this.getChildRef} batchBtn={true} tableConfig={this.state.tableConfig} formItem={this.state.formItem} />
             </Fragment>
 
         );

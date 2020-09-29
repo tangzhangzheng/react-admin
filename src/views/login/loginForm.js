@@ -15,8 +15,10 @@ import Code from "../../components/code/index"
 import CryptoJs from 'crypto-js'
 
 import { setUsername, setToken } from '../../utils/cookies'
-
-
+// redux
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { setTokenAction, setUsernameAction } from '@/store/action/app'
 
 class LoginForm extends Component {
     constructor(props) {
@@ -45,8 +47,10 @@ class LoginForm extends Component {
             })
             // 存储token
             const data = res.data.data
-            setToken(data.token)
-            setUsername(data.username)
+            console.log(this.props)
+            this.props.action.setToken(data.token)
+            this.props.action.setUsername(data.username)
+
             this.props.history.push('/index')
         }).catch(err => {
             this.setState({
@@ -144,5 +148,19 @@ class LoginForm extends Component {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        action: bindActionCreators(
+            { setToken: setTokenAction, setUsername: setUsernameAction }
+            , dispatch
+        )
 
-export default withRouter(LoginForm);
+    }
+}
+
+export default connect(
+    null,
+    mapDispatchToProps
+)(withRouter(LoginForm))
+
+
